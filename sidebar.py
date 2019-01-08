@@ -34,6 +34,7 @@ class SideBar:
         pygame.draw.rect(screen, (255, 255, 255), pygame.Rect(self.x + 2, self.y + 1.3 * self.height + 52, self.width - 4, self.height - 14))
 
     def show_score(self):
+        pygame.draw.rect(screen, (255, 255, 255), pygame.Rect(self.x + 2, self.y + 1.3 * self.height + 52, self.width - 4, self.height - 14))
         score_font = pygame.font.SysFont('Calibri (Body)', 50)
         score = score_font.render(str(self.score), False, (0, 0, 0))
         screen.blit(score, (self.width / 2 - 10, self.y + 1.5*self.height + 50))

@@ -17,15 +17,25 @@ def home_screen(screen):
     screen.fill(WHITE)
     pygame.display.set_caption('Dictionary')
     logo = pygame.image.load('images/logo.PNG')
-    screen.blit(logo, (w/4, h/12))
+    screen.blit(logo, (w/4.5, h/12))
     start_text = myfont.render("Click to continue", False, (0, 0, 0))
-    screen.blit(start_text, (1.2*w/3, 5.5*h/7))
+    screen.blit(start_text, (w/3 + 100, 5.5*h/7))
 
 
 def main():
-    # home_screen(screen)
+    home = True
+    while home:
+        home_screen(screen)
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit(0)
+            if event.type == MOUSEBUTTONDOWN:
+                home = False
+        pygame.display.update()
 
     start_game = game()
+    sidebar = SideBar()
     while True:
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -33,11 +43,19 @@ def main():
                 sys.exit(0)
             if event.type == MOUSEBUTTONDOWN:
                 x, y = event.pos
-                print("x: " + str(x) + " y: " + str(y))
-                if SideBar().help_rect.collidepoint(x, y):
+                if sidebar.help_rect.collidepoint(x, y):
                     print("Help icon clicked")
-                if SideBar().shuffle_rect.collidepoint(x, y):
+                if sidebar.shuffle_rect.collidepoint(x, y):
                     start_game.on_click_shuffle()
+                if start_game.new_word_rect.collidepoint(x, y):
+                    start_game.on_click_new_word()
+                if start_game.submit_rect.collidepoint(x, y):
+                    if start_game.submit_status():
+                        sidebar.add_score()
+                if start_game.check_clicked_shuffled_letters(x, y):
+                    start_game.update_display()
+                if start_game.clear_rect.collidepoint(x, y):
+                    start_game.clear_submission()
             pygame.display.flip()
 
 
