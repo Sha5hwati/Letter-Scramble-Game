@@ -24,7 +24,5 @@ python3 -m pip install -U pygame --user
 py -m pip install PyDictionary
 ```
 
-Demo
----
 
 
