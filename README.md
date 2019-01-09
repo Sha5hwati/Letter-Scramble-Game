@@ -3,7 +3,7 @@ A word game developed using PyGame. You are given a scrambled word and you need 
 
 Features
 ---
-* You have 100 seconds to unscramble as many word as you can
+* You have 200 seconds to unscramble as many word as you can
 * Everytime you unscramble a word correctly, you get the meaning of the word too
 * If you fail to do so, you can move on to the next word
 * Before the next word is displayed, the solution to the current set is displayed along with the meaning of the word
@@ -14,8 +14,8 @@ Features
 
 Usage
 ---
-* Use Python 3
-* Install the following packages
+Use Python 3
+Install the following packages
 ```
 python3 -m pip install -U pygame --user
 py -m pip install PyDictionary
