@@ -16,7 +16,7 @@ screen = pygame.display.set_mode((w, h))
 
 def home_screen(screen):
     screen.fill(WHITE)
-    pygame.display.set_caption('Dictionary')
+    pygame.display.set_caption('Letter Scramble Game')
     logo = pygame.image.load('images/logo.PNG')
     screen.blit(logo, (w/4.5, h/12))
     start_text = myfont.render("Click to Start", False, (0, 0, 0))
@@ -47,6 +47,14 @@ def help():
                                         "arrangement of the word for help.")
 
 
+def display_incorrect(screen):
+    text = myfont.render("INCORRECT", False, (0, 0, 0))
+    screen.blit(text, (w/2, 10))
+    pygame.display.update()
+    pygame.time.delay(800)
+    pygame.draw.rect(screen, (175, 238, 238), (w/2, 0, 150, 30))
+    pygame.display.update()
+
 def main():
     home = True
     while home:
@@ -68,7 +76,7 @@ def main():
         current = myfont.render(str(minutes), False, (0, 0, 0))
         screen.blit(current, (w - 100, 0))
 
-        if str(minutes) >= "1.01":
+        if str(minutes) >= "2.01":
             game_end(start_game, sidebar )
             main()
 
@@ -88,6 +96,8 @@ def main():
                 if start_game.submit_rect.collidepoint(x, y):
                     if start_game.submit_status():
                         sidebar.add_score()
+                    else:
+                        display_incorrect(screen)
                 if start_game.check_clicked_shuffled_letters(x, y):
                     start_game.update_display()
                 if start_game.clear_rect.collidepoint(x, y):

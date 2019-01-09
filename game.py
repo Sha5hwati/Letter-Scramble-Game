@@ -1,5 +1,4 @@
 from PyDictionary import PyDictionary
-from random_word import RandomWords
 from itertools import permutations
 import random
 from sidebar import *
@@ -17,10 +16,12 @@ class game:
     submission = ""
     shuffled_word_positions = []
     chosen = []
+    words = []
     total_words = 0
 
     def __init__(self):
         screen.fill(self.LIGHT_TEAL)
+        self.read_words()
         self.extra = 0
         self.new_word_icon = pygame.image.load('images/next.png')
         self.new_word_rect = self.new_word_icon.get_rect()
@@ -29,6 +30,11 @@ class game:
         self.clear_icon = pygame.image.load('images/clear.png')
         self.clear_rect = self.clear_icon.get_rect()
         self.on_click_new_word()
+
+    def read_words(self):
+        text_file = open("words.txt", "r")
+        self.words = text_file.readlines()
+        text_file.close()
 
     def on_click_shuffle(self):
         self.shuffle()
@@ -45,15 +51,23 @@ class game:
         return meanings
 
     def get_word(self):
-        r = RandomWords()
-        self.word = r.get_random_word(hasDictionaryDef="true", minLength=3, maxLength=6)
-        start = pygame.time.get_ticks()
+        # r = RandomWords()
+        # self.word = r.get_random_word(hasDictionaryDef="true", minLength=3, maxLength=6)
+        position = random.randint(0, len(self.words))
+
+        self.word = self.words[position].strip()
+
+        # start = pygame.time.get_ticks()
         print("M: " + self.get_meaning())
-        while self.get_meaning() == "":
-            self.word = r.get_random_word(hasDictionaryDef="true", minLength=3, maxLength=6)
+        while len(self.word) < 3 or len(self.word) > 6 or self.get_meaning() == "":
+            position = random.randint(0, len(self.words))
+            self.word = self.words[position].strip()
+            # self.word = r.get_random_word(hasDictionaryDef="true", minLength=3, maxLength=6)
             print("M: " + self.get_meaning())
+        print("here, synonyms for " + "lazy" + " are " + str(self.dictionary.antonym("chicken")))
+        # print("here, synonyms for " + self.word + " are " + self.dictionary.synonym(self.word))
         self.word = self.word.upper()
-        self.extra = pygame.time.get_ticks() - start
+        # self.extra = pygame.time.get_ticks() - start
 
     def shuffle(self):
         words = list(map("".join, permutations(self.word)))
@@ -163,11 +177,9 @@ class game:
 
     def submit_status(self):
         if self.submission == self.word:
-            print("Correct submission")
             self.display_meaning()
             self.on_click_new_word()
             return True
         else:
-            print("Incorrect submission")
             self.clear_submission()
             return False
