@@ -1,109 +1,111 @@
 import pygame
 from game import *
 from pygame.locals import *
+from tkinter import *
+from tkinter import messagebox
 
-w = 900
-h = 500
-b = 40
+W = 900
+H = 500
+B = 40
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 
 pygame.init()
 pygame.font.init()
-myfont = pygame.font.SysFont('Calibri (Body)', 30)
-screen = pygame.display.set_mode((w, h))
+SCREEN = pygame.display.set_mode((W, H))
+FONT = pygame.font.SysFont('Calibri (Body)', 30)
 
 
-def home_screen(screen):
-    screen.fill(WHITE)
-    pygame.display.set_caption('Letter Scramble Game')
-    logo = pygame.image.load('images/logo.PNG')
-    screen.blit(logo, (w/4.5, h/12))
-    start_text = myfont.render("Click to Start", False, (0, 0, 0))
-    screen.blit(start_text, (w/3 + 120, 5*h/7))
+class Start:
 
+    def __init__(self):
+        self.__sidebar = None
+        self.__game = None
+        self.__start_time = 0
 
-def get_time(start_time):
-    counting_time = pygame.time.get_ticks() - start_time
-    minutes = "{:.2f}".format(counting_time/60000)
-    return minutes
+    def __home_screen(self):
+        SCREEN.fill(WHITE)
+        pygame.display.set_caption('Letter Scramble Game')
+        logo = pygame.image.load('images/logo.PNG')
+        SCREEN.blit(logo, (W/4.5, H/12))
+        start_text = FONT.render("Click to Start", False, (0, 0, 0))
+        SCREEN.blit(start_text, (W/3 + 120, 5*H/7))
 
+    def __get_time(self):
+        counting_time = pygame.time.get_ticks() - self.__start_time
+        minutes = "{:.2f}".format(counting_time/60000)
+        return minutes
 
-def game_end(start_game, sidebar):
-    score = str(sidebar.score)
-    total = str(start_game.total_words)
-    new = str(start_game.total_words - sidebar.score)
-    Tk().withdraw()
-    messagebox.showinfo("Game Over", str(start_game.get_meaning()) +
-                        "\n\nYour Score is: " + score + " out of " + total
-                        + "\nYou have learned " + new + " new words!! :D")
+    def __game_end(self):
+        score = str(self.__sidebar.get_score())
+        total = str(self.__game.get_total())
+        new = str(self.__game.get_total() - self.__sidebar.get_score())
+        Tk().withdraw()
+        messagebox.showinfo("Game Over", str(self.__game.get_meaning()) +
+                            "\n\nYour Score is: " + score + " out of " + total
+                            + "\nYou have learned " + new + " new words!! :D")
 
+    def __help(self):
+        Tk().withdraw()
+        messagebox.showinfo("Instructions", "Rearrange as many words as you can in 1.00 minutes to form a valid "
+                                            "english words. You can learn a new word by clicking on NEXT. getting it's "
+                                            "meaning and moving on to the next word. Use SHUFFLE symbol in the sidebar"
+                                            " to get a new arrangement of the word for help.")
 
-def help():
-    Tk().withdraw()
-    messagebox.showinfo("Instructions", "Rearrange as many words as you can in 1.00 minutes to form a valid english "
-                                        "words. You can learn a new word by clicking on NEXT. getting it's meaning and "
-                                        "moving on to the next word. Use SHUFFLE symbol in the sidebar to get a new "
-                                        "arrangement of the word for help.")
+    def home_loop(self):
+        home = True
+        while home:
+            self.__home_screen()
+            for event in pygame.event.get():
+                if event.type == QUIT:
+                    pygame.quit()
+                    sys.exit(0)
+                if event.type == MOUSEBUTTONDOWN:
+                    home = False
+            pygame.display.update()
 
+    def game_loop(self):
+        self.__game = Game()
+        self.__sidebar = SideBar()
+        self.__start_time = pygame.time.get_ticks()
+        while True:
+            pygame.draw.rect(SCREEN, WHITE, (W - 130, 0, 130, 40))
+            minutes = self.__get_time()
+            current = FONT.render(str(minutes), False, (0, 0, 0))
+            SCREEN.blit(current, (W - 100, 0))
 
-def display_incorrect(screen):
-    text = myfont.render("INCORRECT", False, (0, 0, 0))
-    screen.blit(text, (w/2, 10))
-    pygame.display.update()
-    pygame.time.delay(800)
-    pygame.draw.rect(screen, (175, 238, 238), (w/2, 0, 150, 30))
-    pygame.display.update()
+            if str(minutes) >= "2.01":
+                self.__game_end()
+                main()
+
+            for event in pygame.event.get():
+                if event.type == QUIT:
+                    pygame.quit()
+                    sys.exit(0)
+                if event.type == MOUSEBUTTONDOWN:
+                    x, y = event.pos
+                    if self.__sidebar.help_rect.collidepoint(x, y):
+                        self.__help()
+                    if self.__sidebar.shuffle_rect.collidepoint(x, y):
+                        self.__game.on_click_shuffle()
+                    if self.__game.new_word_rect.collidepoint(x, y):
+                        self.__game.display_meaning(False)
+                        self.__game.on_click_new_word()
+                    if self.__game.submit_rect.collidepoint(x, y):
+                        if self.__game.submit_status():
+                            self.__sidebar.add_score()
+                    if self.__game.check_clicked_shuffled_letters(x, y):
+                        self.__game.update_display()
+                    if self.__game.clear_rect.collidepoint(x, y):
+                        self.__game.clear_submission()
+                pygame.display.flip()
+            pygame.display.update()
+
 
 def main():
-    home = True
-    while home:
-        home_screen(screen)
-        for event in pygame.event.get():
-            if event.type == QUIT:
-                pygame.quit()
-                sys.exit(0)
-            if event.type == MOUSEBUTTONDOWN:
-                home = False
-        pygame.display.update()
-
-    start_game = game()
-    sidebar = SideBar()
-    start_time = pygame.time.get_ticks()
-    while True:
-        pygame.draw.rect(screen, (255, 255, 255), (w-130, 0, 130, 40))
-        minutes = get_time(start_time)
-        current = myfont.render(str(minutes), False, (0, 0, 0))
-        screen.blit(current, (w - 100, 0))
-
-        if str(minutes) >= "2.01":
-            game_end(start_game, sidebar )
-            main()
-
-        for event in pygame.event.get():
-            if event.type == QUIT:
-                pygame.quit()
-                sys.exit(0)
-            if event.type == MOUSEBUTTONDOWN:
-                x, y = event.pos
-                if sidebar.help_rect.collidepoint(x, y):
-                    help()
-                if sidebar.shuffle_rect.collidepoint(x, y):
-                    start_game.on_click_shuffle()
-                if start_game.new_word_rect.collidepoint(x, y):
-                    start_game.display_new_word_meaning()
-                    start_game.on_click_new_word()
-                if start_game.submit_rect.collidepoint(x, y):
-                    if start_game.submit_status():
-                        sidebar.add_score()
-                    else:
-                        display_incorrect(screen)
-                if start_game.check_clicked_shuffled_letters(x, y):
-                    start_game.update_display()
-                if start_game.clear_rect.collidepoint(x, y):
-                    start_game.clear_submission()
-            pygame.display.flip()
-        pygame.display.update()
+    play_game = Start()
+    play_game.home_loop()
+    play_game.game_loop()
 
 
 if __name__ == '__main__':
