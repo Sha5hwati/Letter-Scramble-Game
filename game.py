@@ -1,10 +1,12 @@
-import pygame
 from PyDictionary import PyDictionary
 from random_word import RandomWords
 from itertools import permutations
 import random
 from sidebar import *
-from main import myfont, screen, w, h
+from main import screen, w, h
+from tkinter import *
+from tkinter import messagebox
+
 
 class game:
     dictionary = PyDictionary()
@@ -15,9 +17,11 @@ class game:
     submission = ""
     shuffled_word_positions = []
     chosen = []
+    total_words = 0
 
     def __init__(self):
         screen.fill(self.LIGHT_TEAL)
+        self.extra = 0
         self.new_word_icon = pygame.image.load('images/next.png')
         self.new_word_rect = self.new_word_icon.get_rect()
         self.submit_icon = pygame.image.load('images/submit.png')
@@ -34,7 +38,7 @@ class game:
         meanings = ""
         if self.word != "":
             mean = self.dictionary.meaning(str(self.word))
-            if mean:
+            if mean is not None:
                 for keys in mean:
                     val = mean[keys][0]
                     meanings = "" + str(self.word) + ": " + str(val)
@@ -43,7 +47,13 @@ class game:
     def get_word(self):
         r = RandomWords()
         self.word = r.get_random_word(hasDictionaryDef="true", minLength=3, maxLength=6)
+        start = pygame.time.get_ticks()
+        print("M: " + self.get_meaning())
+        while self.get_meaning() == "":
+            self.word = r.get_random_word(hasDictionaryDef="true", minLength=3, maxLength=6)
+            print("M: " + self.get_meaning())
         self.word = self.word.upper()
+        self.extra = pygame.time.get_ticks() - start
 
     def shuffle(self):
         words = list(map("".join, permutations(self.word)))
@@ -86,6 +96,7 @@ class game:
         if len(self.word) != 0:
             self.clear_word()
         self.shuffled_word_positions.clear()
+        self.total_words += 1
         self.get_word()
         self.shuffle()
         self.display_word()
@@ -125,6 +136,10 @@ class game:
             letter = letter_font.render(str(self.submission[i]), False, (255, 245, 255))
             screen.blit(letter, (start_x + i * 90 + 20, h / 3 - 20))
 
+        for i in range(0, len(self.chosen)):
+            if self.chosen[i]:
+                pygame.draw.line(screen, (255, 0, 0), (start_x + i * 90, h / 2), (start_x + i * 90 + 80, h / 2 + 70))
+
     def clear_submission(self):
         start_x = (1.5*int(w))/len(self.shuffled_word)
         for i in range(0, len(self.submission)):
@@ -132,10 +147,24 @@ class game:
         for i in range(0, len(self.chosen)):
             self.chosen[i] = False
         self.submission = ""
+        self.display_word()
+
+    def display_meaning(self):
+        root = Tk()
+        root.withdraw()
+        meaning = self.get_meaning()
+        messagebox.showinfo("Yay!! Correct Submission", str(meaning))
+
+    def display_new_word_meaning(self):
+        root = Tk()
+        root.withdraw()
+        meaning = self.get_meaning()
+        messagebox.showinfo("You learned a new word", str(meaning))
 
     def submit_status(self):
         if self.submission == self.word:
             print("Correct submission")
+            self.display_meaning()
             self.on_click_new_word()
             return True
         else:
