@@ -1,5 +1,6 @@
 # Letter-Scramble-Game
 A word game developed using PyGame. You are given a scrambled word and you need to rearrange it to form a meaningful word. If you cannot do so, you can get the answer, along with the meaning of the word and then move on to the next word.
+These words are selected from vocabulary based examinations like SAT, GRE, and Vocabulary tests.
 
 ![](https://github.com/Shash0405/Letter-Scramble-Game/blob/master/Screenshots/game.PNG)
 
