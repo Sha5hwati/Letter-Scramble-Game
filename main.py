@@ -4,7 +4,7 @@ from pygame.locals import *
 from tkinter import *
 from tkinter import messagebox
 
-W = 900
+W = 1100
 H = 500
 B = 40
 WHITE = (255, 255, 255)
@@ -27,7 +27,7 @@ class Start:
         SCREEN.fill(WHITE)
         pygame.display.set_caption('Letter Scramble Game')
         logo = pygame.image.load('images/logo.PNG')
-        SCREEN.blit(logo, (W/4.5, H/12))
+        SCREEN.blit(logo, (W/4, H/12))
         start_text = FONT.render("Click to Start", False, (0, 0, 0))
         SCREEN.blit(start_text, (W/3 + 120, 5*H/7))
 

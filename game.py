@@ -52,20 +52,20 @@ class Game:
     def __get_word(self):
         position = random.randint(0, len(self.__words))
         self.__word = self.__words[position].strip()
-        while len(self.__word) < 3 or len(self.__word) > 6 or self.get_meaning() == "":
+        while len(self.__word) > 9 or self.get_meaning() == "":
             position = random.randint(0, len(self.__words))
             self.__word = self.__words[position].strip()
         self.__word = self.__word.upper()
 
     def __clear_word(self):
-        start_x = (1.5*int(W))/len(self.__word)
+        start_x = (2*int(W))/len(self.__word)
         for i in range(0, len(self.__word)):
             pygame.draw.line(SCREEN, self.__LIGHT_TEAL, (start_x + i*90, H/3 + 50), (start_x + i*90 + 80, H/3 + 50))
             rect = pygame.Rect(pygame.Rect(start_x + i * 90, H/2, 80, 70))
             pygame.draw.rect(SCREEN, self.__LIGHT_TEAL, rect)
 
     def __display_word(self):
-        start_x = (1.5*int(W))/len(self.__shuffled_word)
+        start_x = (2*int(W))/len(self.__shuffled_word)
         for i in range(0, len(self.__word)):
             rect = pygame.Rect(pygame.Rect(start_x + i*90, H/2, 80, 70))
             pygame.draw.rect(SCREEN, BLACK, rect)
@@ -80,7 +80,7 @@ class Game:
             self.__chosen.append(False)
 
     def __display_blank(self):
-        start_x = (1.5*int(W))/len(self.__shuffled_word)
+        start_x = (2*int(W))/len(self.__shuffled_word)
         for i in range(0, len(self.__word)):
             pygame.draw.line(SCREEN, (0, 0, 0), (start_x + i*90, H/3 + 50), (start_x + i*90 + 80, H/3 + 50))
 
@@ -93,18 +93,18 @@ class Game:
 
     def __new_word_button(self):
         self.__new_word_icon = pygame.transform.scale(self.__new_word_icon, (100, 50))
-        SCREEN.blit(self.__new_word_icon, (W/3, H/2+100))
-        self.new_word_rect = self.__new_word_icon.get_rect(x=W/3, y=H/2+100)
+        SCREEN.blit(self.__new_word_icon, (W/3 + 100, H/2+100))
+        self.new_word_rect = self.__new_word_icon.get_rect(x=W/3 + 100, y=H/2+100)
 
     def __clear_button(self):
         self.__clear_icon = pygame.transform.scale(self.__clear_icon, (100, 50))
-        SCREEN.blit(self.__clear_icon, (W/3 + 130, H/2 + 100))
-        self.clear_rect = self.__clear_icon.get_rect(x=W / 3 + 130, y=H/2 + 100)
+        SCREEN.blit(self.__clear_icon, (W/3 + 130 + 100, H/2 + 100))
+        self.clear_rect = self.__clear_icon.get_rect(x=W / 3 + 130 + 100, y=H/2 + 100)
 
     def __submit_button(self):
         self.__submit_icon = pygame.transform.scale(self.__submit_icon, (100, 50))
-        SCREEN.blit(self.__submit_icon, (W / 3 + 260, H / 2 + 100))
-        self.submit_rect = self.__submit_icon.get_rect(x=W / 3 + 260, y=H / 2 + 100)
+        SCREEN.blit(self.__submit_icon, (W / 3 + 260 + 100, H / 2 + 100))
+        self.submit_rect = self.__submit_icon.get_rect(x=W / 3 + 260 + 100, y=H / 2 + 100)
 
     def on_click_shuffle(self):
         self.__shuffle()
@@ -170,7 +170,7 @@ class Game:
             return False
 
     def update_display(self):
-        start_x = (1.5*int(W))/len(self.__shuffled_word)
+        start_x = (2*int(W))/len(self.__shuffled_word)
         for i in range(0, len(self.__submission)):
             pygame.draw.rect(SCREEN, BLACK, pygame.Rect(start_x + i * 90, H / 3 - 30, 80, 70))
             letter_font = pygame.font.SysFont('Calibri (Body)', 60)
@@ -182,7 +182,7 @@ class Game:
                 pygame.draw.line(SCREEN, self.__RED, (start_x + i * 90, H / 2), (start_x + i * 90 + 80, H / 2 + 70))
 
     def clear_submission(self):
-        start_x = (1.5*int(W))/len(self.__shuffled_word)
+        start_x = (2*int(W))/len(self.__shuffled_word)
         for i in range(0, len(self.__submission)):
             pygame.draw.rect(SCREEN, self.__LIGHT_TEAL, pygame.Rect(start_x + i * 90, H / 3 - 30, 80, 70))
         for i in range(0, len(self.__chosen)):
