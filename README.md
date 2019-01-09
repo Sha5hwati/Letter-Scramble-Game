@@ -18,7 +18,9 @@ Features
 Usage
 ---
 Use Python 3
+
 Install the following packages
+
 ```
 python3 -m pip install -U pygame --user
 py -m pip install PyDictionary
